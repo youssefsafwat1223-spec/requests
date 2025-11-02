@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام يُسر - طلب استئذان</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 40px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 15px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .phone-group {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 10px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .error {
+            color: #ef4444;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 40px;
+        }
+
+        .success-message h2 {
+            color: #10b981;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .success-message p {
+            color: #6b7280;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .new-request-btn {
+            padding: 12px 30px;
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .loading {
+            display: none;
+            margin-right: 10px;
+        }
+
+        .loading.show {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .country-option {
+            font-family: 'Cairo', sans-serif;
+        }
+
+        @media (max-width: 640px) {
+            .phone-group {
+                grid-template-columns: 120px 1fr;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .form-container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌸 نظام يُسر</h1>
+            <p>طلب استئذان - يرجى تعبئة البيانات التالية</p>
+        </div>
+
+        <div class="form-container" id="formContainer">
+            <form id="excuseForm">
+                <div class="form-group">
+                    <label for="studentName">اسم الطالبة *</label>
+                    <input type="text" id="studentName" placeholder="أدخلي اسمك الكامل" required>
+                    <span class="error" id="studentNameError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>رقم هاتف التواصل *</label>
+                    <div class="phone-group">
+                        <select id="countryCode" required>
+                            <option value="+966">🇸🇦 +966</option>
+                            <option value="+20">🇪🇬 +20</option>
+                            <option value="+971">🇦🇪 +971</option>
+                            <option value="+965">🇰🇼 +965</option>
+                            <option value="+974">🇶🇦 +974</option>
+                            <option value="+973">🇧🇭 +973</option>
+                            <option value="+968">🇴🇲 +968</option>
+                            <option value="+962">🇯🇴 +962</option>
+                            <option value="+961">🇱🇧 +961</option>
+                            <option value="+1">🇺🇸 +1</option>
+                            <option value="+44">🇬🇧 +44</option>
+                        </select>
+                        <input type="tel" id="phoneNumber" placeholder="5xxxxxxxx" required>
+                    </div>
+                    <small>تأكدي من الرقم - سيتم إرسال الإشعارات عليه عبر WhatsApp</small>
+                    <span class="error" id="phoneError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="civilId">رقم السجل المدني *</label>
+                    <input type="text" id="civilId" placeholder="1xxxxxxxxx" maxlength="10" required>
+                    <span class="error" id="civilIdError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="grade">الصف الدراسي *</label>
+                    <select id="grade" required>
+                        <option value="">اختر الصف</option>
+                        <option value="الأول الثانوي">الأول الثانوي</option>
+                        <option value="الثاني الثانوي">الثاني الثانوي</option>
+                        <option value="الثالث الثانوي">الثالث الثانوي</option>
+                    </select>
+                    <span class="error" id="gradeError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="class">الفصل *</label>
+                    <select id="class" required>
+                        <option value="">اختر الفصل</option>
+                        <option value="فصل 1">فصل 1</option>
+                        <option value="فصل 2">فصل 2</option>
+                        <option value="فصل 3">فصل 3</option>
+                        <option value="فصل 4">فصل 4</option>
+                    </select>
+                    <span class="error" id="classError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="reason">سبب الاستئذان *</label>
+                    <textarea id="reason" placeholder="يرجى ذكر سبب الاستئذان بوضوح" rows="4" required></textarea>
+                    <span class="error" id="reasonError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="excuseDate">تاريخ الاستئذان *</label>
+                    <input type="date" id="excuseDate" required>
+                    <span class="error" id="dateError"></span>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <span class="loading" id="loading"></span>
+                    <span id="btnText">إرسال الطلب</span>
+                </button>
+            </form>
+        </div>
+
+        <div class="success-message" id="successMessage">
+            <div class="success-icon">✓</div>
+            <h2>تم تسجيل طلبك بنجاح!</h2>
+            <p id="successText"></p>
+            <button class="new-request-btn" onclick="location.reload()">تقديم طلب جديد</button>
+        </div>
+    </div>
+
+    <script>
+        // Google Apps Script Web App URL - ضع الرابط هنا بعد النشر
+        const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+
+        const form = document.getElementById('excuseForm');
+        const formContainer = document.getElementById('formContainer');
+        const successMessage = document.getElementById('successMessage');
+        const loading = document.getElementById('loading');
+        const btnText = document.getElementById('btnText');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('excuseDate').setAttribute('min', today);
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Clear previous errors
+            document.querySelectorAll('.error').forEach(err => err.classList.remove('show'));
+            
+            // Validate form
+            if (!validateForm()) {
+                return;
+            }
+
+            // Get form data
+            const formData = {
+                studentName: document.getElementById('studentName').value.trim(),
+                countryCode: document.getElementById('countryCode').value,
+                phoneNumber: document.getElementById('phoneNumber').value.trim(),
+                fullPhone: document.getElementById('countryCode').value + document.getElementById('phoneNumber').value.trim(),
+                civilId: document.getElementById('civilId').value.trim(),
+                grade: document.getElementById('grade').value,
+                class: document.getElementById('class').value,
+                reason: document.getElementById('reason').value.trim(),
+                excuseDate: document.getElementById('excuseDate').value,
+                requestDate: new Date().toISOString(),
+                status: 'Pending'
+            };
+
+            // Show loading
+            submitBtn.disabled = true;
+            loading.classList.add('show');
+            btnText.textContent = 'جاري الإرسال...';
+
+            try {
+                // Send to Google Sheets
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                // Show success message
+                formContainer.style.display = 'none';
+                successMessage.classList.add('show');
+                document.getElementById('successText').innerHTML = `
+                    سيتم مراجعة طلبك وإرسال الرد عبر WhatsApp على الرقم:<br>
+                    <strong>${formData.fullPhone}</strong>
+                `;
+
+            } catch (error) {
+                alert('حدث خطأ في الإرسال. يرجى المحاولة مرة أخرى.');
+                console.error('Error:', error);
+            } finally {
+                submitBtn.disabled = false;
+                loading.classList.remove('show');
+                btnText.textContent = 'إرسال الطلب';
+            }
+        });
+
+        function validateForm() {
+            let isValid = true;
+
+            // Validate student name
+            const studentName = document.getElementById('studentName').value.trim();
+            if (studentName.length < 3) {
+                showError('studentNameError', 'الاسم يجب أن يكون 3 أحرف على الأقل');
+                isValid = false;
+            }
+
+            // Validate phone number
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            if (phoneNumber.length < 7 || !/^\d+$/.test(phoneNumber)) {
+                showError('phoneError', 'رقم الهاتف غير صحيح');
+                isValid = false;
+            }
+
+            // Validate civil ID
+            const civilId = document.getElementById('civilId').value.trim();
+            if (civilId.length !== 10 || !/^\d{10}$/.test(civilId)) {
+                showError('civilIdError', 'رقم السجل المدني يجب أن يكون 10 أرقام');
+                isValid = false;
+            }
+
+            // Validate grade
+            if (!document.getElementById('grade').value) {
+                showError('gradeError', 'يرجى اختيار الصف');
+                isValid = false;
+            }
+
+            // Validate class
+            if (!document.getElementById('class').value) {
+                showError('classError', 'يرجى اختيار الفصل');
+                isValid = false;
+            }
+
+            // Validate reason
+            const reason = document.getElementById('reason').value.trim();
+            if (reason.length < 10) {
+                showError('reasonError', 'السبب يجب أن يكون 10 أحرف على الأقل');
+                isValid = false;
+            }
+
+            // Validate date
+            const excuseDate = document.getElementById('excuseDate').value;
+            if (!excuseDate) {
+                showError('dateError', 'يرجى اختيار التاريخ');
+                isValid = false;
+            } else {
+                const selectedDate = new Date(excuseDate);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                if (selectedDate < today) {
+                    showError('dateError', 'لا يمكن اختيار تاريخ في الماضي');
+                    isValid = false;
+                }
+            }
+
+            return isValid;
+        }
+
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
+            errorElement.classList.add('show');
+        }
+
+        // Only allow numbers in phone and civil ID
+        document.getElementById('phoneNumber').addEventListener('input', function(e) {
+            this.value = this.value.replace(/\D/g, '');
+        });
+
+        document.getElementById('civilId').addEventListener('input', function(e) {
+            this.value = this.value.replace(/\D/g, '');
+        });
+    </script>
+</body>
+</html>
