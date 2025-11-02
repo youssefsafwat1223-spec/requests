@@ -237,8 +237,14 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🌸 نظام يُسر</h1>
-            <p>طلب استئذان - يرجى تعبئة البيانات التالية</p>
+            <div class="header-logo-section">
+                <img src="logo.jpg" alt="شعار يُسر" class="header-logo" onerror="this.style.display='none'">
+                <div class="header-text-section">
+                    <h1>🌸 نظام يُسر</h1>
+                    <p class="header-motto">مبادرة "يُسر" - لأننا نؤمن أن التقنية خُلِقت لتسهّل الحياة</p>
+                </div>
+            </div>
+            <p class="header-subtitle">طلب استئذان - يرجى تعبئة البيانات التالية</p>
         </div>
 
         <div class="form-container" id="formContainer">
@@ -329,7 +335,7 @@
 
     <script>
         // Google Apps Script Web App URL - ضع الرابط هنا بعد النشر
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbytmaQmu-0MMQ3m71dBFE4GyjxJkX62A3ZcJXh8lM5ib3FICU-FAoAmF-KVkEeslnE6gg/exec';
+        const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
 
         const form = document.getElementById('excuseForm');
         const formContainer = document.getElementById('formContainer');
